@@ -19,6 +19,13 @@ pwm-samsung.ko
 pl330.ko
 samsung-dma.ko
 dss.ko
+exynos-ecc-handler.ko
+hardlockup-watchdog.ko
+exynos-itmon-v2.ko
+exynos-adv-tracer.ko
+exynos-adv-tracer-s2d.ko
+ehld.ko
+exynos-ssld.ko
 exynos-getcpustate.ko
 sysevent.ko
 sysevent_notif.ko
