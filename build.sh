@@ -165,7 +165,6 @@ $MKBOOTIMG --header_version "$BOOT_HEADER" \
     --vendor_boot "$OUT_VENDORBOOTIMG" \
     --vendor_bootconfig "$(pwd)/bootconfig" \
     --vendor_cmdline "bootconfig loop.max_part=7" \
-    --board "SRPVK10B015" \
     --dtb "$OUT_DTBIMAGE" \
     --vendor_ramdisk "$(pwd)/ramdisk_platform.lz4" \
     --ramdisk_type dlkm \
