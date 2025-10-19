@@ -1,7 +1,6 @@
-## Supported devices : a14x, m14x
+## Supported devices : a54x
 
 ## To build
 ```
-export DEVICE=<device>
-./build.sh - from kernel source dir
+./build.sh [oc]
 ```
