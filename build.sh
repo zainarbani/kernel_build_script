@@ -29,16 +29,15 @@ OUTDIR="$(pwd)/out"
 MODULES_OUTDIR="$(pwd)/modules_out"
 TMPDIR="$(pwd)/kernel_build/tmp"
 
-IN_PLATFORM="$(pwd)/kernel_build/vboot_platform/${DEVICE}"
+PREBUILT_PLATFORM="$(pwd)/kernel_build/vboot_platform/${DEVICE}/vendor_ramdisk_platform.lz4"
 IN_DLKM="$(pwd)/kernel_build/vboot_dlkm/${DEVICE}"
 IN_DTB="$OUTDIR/arch/arm64/boot/dts/exynos/${TARGET_SOC}.dtb"
 
-PLATFORM_RAMDISK_DIR="$TMPDIR/ramdisk_platform"
 DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
 MODULES_DIR="$DLKM_RAMDISK_DIR/lib/modules"
 
-MKBOOTIMG="$(pwd)/kernel_build/mkbootimg/mkbootimg.py"
-MKDTBOIMG="$(pwd)/kernel_build/dtb/mkdtboimg.py"
+MKBOOTIMG="$(pwd)/kernel_build/tools/mkbootimg.py"
+MKDTBOIMG="$(pwd)/kernel_build/tools/mkdtboimg.py"
 
 OUT_KERNELZIP="$(pwd)/kernel_build/Kernel_${DEVICE}.zip"
 OUT_KERNELTAR="$(pwd)/kernel_build/Kernel_${DEVICE}.tar"
@@ -61,7 +60,7 @@ DIR="$(readlink -f .)"
 PARENT_DIR="$(readlink -f ${DIR}/..)"
 
 export CC="$PARENT_DIR/toolchain/clang/bin/clang"
-export PATH="$PARENT_DIR/toolchain/build-tools/path/linux-x86:$PARENT_DIR/toolchain/clang/bin:$PATH"
+export PATH="$PARENT_DIR/toolchain/build-tools/path/linux-x86:$PARENT_DIR/toolchain/kernel-build-tools/linux-x86/bin:$PARENT_DIR/toolchain/clang/bin:$PATH"
 
 if [ ! -d "$PARENT_DIR/toolchain/clang" ]; then
     wget "$CLANG_URL" -O clang.tar.gz &> /dev/null
@@ -75,6 +74,13 @@ if [ ! -d "$PARENT_DIR/toolchain/build-tools" ]; then
     mkdir -p "$PARENT_DIR/toolchain/build-tools"
     tar -xvzf main.tar.gz -C $PARENT_DIR/toolchain/build-tools &> /dev/null
     rm -rf main.tar.gz
+fi
+
+if [ ! -d "$PARENT_DIR/toolchain/kernel-build-tools" ]; then
+    wget https://android.googlesource.com/kernel/prebuilts/build-tools/+archive/refs/heads/main-kernel-build-2023.tar.gz &> /dev/null
+    mkdir -p "$PARENT_DIR/toolchain/kernel-build-tools"
+    tar -xvzf main-kernel-build-2023.tar.gz -C $PARENT_DIR/toolchain/kernel-build-tools &> /dev/null
+    rm -rf main-kernel-build-2023.tar.gz
 fi
 
 # Overclock option
@@ -96,11 +102,6 @@ rm -f "$OUT_BOOTIMG"
 rm -f "$OUT_VENDORBOOTIMG"
 mkdir "$TMPDIR"
 mkdir -p "$MODULES_DIR/0.0"
-mkdir "$PLATFORM_RAMDISK_DIR"
-
-cp -rf "$IN_PLATFORM"/* "$PLATFORM_RAMDISK_DIR/"
-mkdir "$PLATFORM_RAMDISK_DIR/first_stage_ramdisk"
-cp -f "$PLATFORM_RAMDISK_DIR/fstab.${TARGET_SOC}" "$PLATFORM_RAMDISK_DIR/first_stage_ramdisk/fstab.${TARGET_SOC}"
 
 if ! find "$MODULES_OUTDIR/lib/modules" -mindepth 1 -type d | read; then
     echo "Unknown error!"
@@ -154,19 +155,15 @@ $MKBOOTIMG --header_version "$BOOT_HEADER" \
 echo "Done!"
 echo "Building vendor_boot image..."
 
-cd "$DLKM_RAMDISK_DIR"
-find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > ../ramdisk_dlkm.lz4
-cd ../ramdisk_platform
-find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > ../ramdisk_platform.lz4
-cd ..
-echo "buildtime_bootconfig=enable " > bootconfig
+mkbootfs $DLKM_RAMDISK_DIR | lz4 -9cl > "$(pwd)/ramdisk_dlkm.lz4"
 
+echo "buildtime_bootconfig=enable " > bootconfig
 $MKBOOTIMG --header_version "$BOOT_HEADER" \
     --vendor_boot "$OUT_VENDORBOOTIMG" \
     --vendor_bootconfig "$(pwd)/bootconfig" \
     --vendor_cmdline "bootconfig loop.max_part=7" \
     --dtb "$OUT_DTBIMAGE" \
-    --vendor_ramdisk "$(pwd)/ramdisk_platform.lz4" \
+    --vendor_ramdisk "$PREBUILT_PLATFORM" \
     --ramdisk_type dlkm \
     --ramdisk_name dlkm \
     --vendor_ramdisk_fragment "$(pwd)/ramdisk_dlkm.lz4" \
