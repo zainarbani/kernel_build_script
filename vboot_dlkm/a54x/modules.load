@@ -27,6 +27,7 @@ exynos-adv-tracer-s2d.ko
 ehld.ko
 exynos-ssld.ko
 exynos-getcpustate.ko
+memlogger.ko
 sysevent.ko
 sysevent_notif.ko
 imgloader.ko
@@ -50,6 +51,7 @@ ect_parser.ko
 exynos-pm.ko
 mcu_ipc.ko
 shm_ipc.ko
+cpif_memlogger.ko
 cpif_page.ko
 direct_dm.ko
 hook.ko
