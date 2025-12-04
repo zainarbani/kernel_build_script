@@ -205,7 +205,6 @@ sec_crash_key_user.ko
 sec_hard_reset_hook.ko
 sec_key_notifier.ko
 sec_class.ko
-sec_argos.ko
 sec_panel_notifier_v2.ko
 vibrator_vib_info.ko
 shub.ko
