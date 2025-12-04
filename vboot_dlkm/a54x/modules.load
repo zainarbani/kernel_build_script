@@ -262,3 +262,4 @@ sec_audio_debug.ko
 cfg80211.ko
 mstdrv.ko
 qrng_hwrng.ko
+input_booster_lkm.ko
