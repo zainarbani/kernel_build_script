@@ -85,14 +85,16 @@ fi
 
 # Overclock option
 if [ "${1}" == "oc" ]; then
-    ./scripts/config --file arch/${ARCH}/configs/${DEVICE}_defconfig \
+    ./scripts/config --file arch/${ARCH}/configs/${TARGET_SOC}_defconfig \
 		-e CONFIG_SOC_S5E8835_CPU_OC \
 		-e CONFIG_SOC_S5E8835_GPU_OC
     echo "KERNEL_BUILD: Overclock enabled!"
 fi
 
 echo "-${KERNEL_NAME}" > localversion
-make -j$(nproc --all) -C $(pwd) O=out ${DEVICE}_defconfig
+make -j$(nproc --all) -C $(pwd) O=out ${TARGET_SOC}_defconfig
+./scripts/kconfig/merge_config.sh -m -O out out/.config arch/arm64/configs/${DEVICE}.config
+make -j$(nproc --all) -C $(pwd) O=out olddefconfig
 make -j$(nproc --all) -C $(pwd) O=out dtbs
 make -j$(nproc --all) -C $(pwd) O=out
 make -j$(nproc --all) -C $(pwd) O=out INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" INSTALL_MOD_PATH="$MODULES_OUTDIR" modules_install
