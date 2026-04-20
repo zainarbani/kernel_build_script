@@ -70,16 +70,16 @@ if [ ! -d "$PARENT_DIR/toolchain/clang" ]; then
 fi
 
 if [ ! -d "$PARENT_DIR/toolchain/build-tools" ]; then
-    wget https://android.googlesource.com/platform/prebuilts/build-tools/+archive/refs/heads/main.tar.gz &> /dev/null
+    wget https://github.com/aosp-mirror-neo/platform_prebuilts_build-tools/archive/refs/heads/main.tar.gz  &> /dev/null
     mkdir -p "$PARENT_DIR/toolchain/build-tools"
-    tar -xvzf main.tar.gz -C $PARENT_DIR/toolchain/build-tools &> /dev/null
+    tar -xvzf main.tar.gz -C $PARENT_DIR/toolchain/build-tools --strip-components=1  &> /dev/null
     rm -rf main.tar.gz
 fi
 
 if [ ! -d "$PARENT_DIR/toolchain/kernel-build-tools" ]; then
-    wget https://android.googlesource.com/kernel/prebuilts/build-tools/+archive/refs/heads/main-kernel-build-2023.tar.gz &> /dev/null
+    wget https://github.com/aosp-mirror-neo/kernel_prebuilts_build-tools/archive/refs/heads/main-kernel-build-2023.tar.gz  &> /dev/null
     mkdir -p "$PARENT_DIR/toolchain/kernel-build-tools"
-    tar -xvzf main-kernel-build-2023.tar.gz -C $PARENT_DIR/toolchain/kernel-build-tools &> /dev/null
+    tar -xvzf main-kernel-build-2023.tar.gz -C $PARENT_DIR/toolchain/kernel-build-tools --strip-components=1  &> /dev/null
     rm -rf main-kernel-build-2023.tar.gz
 fi
 
