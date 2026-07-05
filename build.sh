@@ -192,11 +192,10 @@ cd "$(pwd)/kernel_build"
 rm -f "$OUT_KERNELTAR"
 lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG" > boot.img.lz4
 lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4
-tar -cf "$OUT_KERNELTAR" boot.img.lz4 vendor_boot.img.lz4
+tar -cf "$OUT_KERNELTAR" boot.img.lz4 vendor_boot.img.lz4 "$OUTDIR/vmlinux"
 cd "$DIR"
 rm -f boot.img.lz4 vendor_boot.img.lz4
 echo "Done! Output: $OUT_KERNELTAR"
-
 echo "Cleaning..."
 rm -f "${OUT_VENDORBOOTIMG}" "${OUT_BOOTIMG}"
 kfinish
