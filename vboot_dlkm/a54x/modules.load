@@ -241,7 +241,6 @@ sec_vibrator_inputff_module.ko
 usb_vendor_receiver.ko
 sb-core.ko
 common_muic.ko
-kperfmon.ko
 usb_typec_manager.ko
 if_cb_manager.ko
 sec_tsp_log.ko
