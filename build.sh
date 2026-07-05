@@ -92,8 +92,7 @@ if [ "${1}" == "oc" ]; then
 fi
 
 echo "-${KERNEL_NAME}" > localversion
-make -j$(nproc --all) -C $(pwd) O=out ${TARGET_SOC}_defconfig
-./scripts/kconfig/merge_config.sh -m -O out out/.config arch/arm64/configs/${DEVICE}.config
+make -j$(nproc --all) -C $(pwd) O=out ${DEVICE}_defconfig
 make -j$(nproc --all) -C $(pwd) O=out olddefconfig
 make -j$(nproc --all) -C $(pwd) O=out dtbs
 make -j$(nproc --all) -C $(pwd) O=out
